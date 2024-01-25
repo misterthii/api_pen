@@ -8,6 +8,7 @@ use OpenApi\Attributes as OA;
 use App\Repository\PenRepository;
 use App\Repository\TypeRepository;
 use App\Repository\BrandRepository;
+use App\Repository\ColorRepository;
 use App\Repository\MaterialRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -133,7 +134,7 @@ class PenController extends AbstractController
     )]
     #[OA\Tag(name: 'pens')]
     #[Security(name: 'Bearer')]
-    public function update(Pen $pen, EntityManagerInterface $em, Request $request, TypeRepository $typeRepository, MaterialRepository $materialRepository, BrandRepository $brandRepository): JsonResponse
+    public function update(Pen $pen, EntityManagerInterface $em, Request $request, TypeRepository $typeRepository, MaterialRepository $materialRepository, ColorRepository $colorRepository, BrandRepository $brandRepository): JsonResponse
     {
         try {
             // On recupère les données du corps de la requête
@@ -166,6 +167,23 @@ class PenController extends AbstractController
                 $pen->setMaterial($material);
             }
 
+            if (!empty($data['color'])) {
+                $color = $colorRepository->find($data['color']);
+
+                if (!$color)
+                    throw new \Exception("La couleur renseigné n'existe pas");
+
+                $pen->setColors($color);
+            }
+
+            if (!empty($data['brand'])) {
+                $brand = $brandRepository->find($data['brand']);
+
+                if (!$brand)
+                    throw new \Exception("L'entreprise renseigné n'existe pas");
+
+                $pen->setBrand($brand);
+            }
 
             $em->flush();
 

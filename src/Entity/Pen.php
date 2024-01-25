@@ -127,6 +127,7 @@ class Pen
         return $this->Material;
     }
 
+
     public function setMaterial(?Material $Material): static
     {
         $this->Material = $Material;
@@ -140,6 +141,13 @@ class Pen
     public function getColors(): Collection
     {
         return $this->colors;
+    }
+
+    public function setColors(?Color $colors): static
+    {
+        $this->colors = $colors;
+
+        return $this;
     }
 
     public function addColor(Color $color): static
