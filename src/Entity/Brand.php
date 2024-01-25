@@ -14,7 +14,6 @@ class Brand
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('pens:read')]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]

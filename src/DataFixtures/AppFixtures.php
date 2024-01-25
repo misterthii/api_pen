@@ -3,14 +3,16 @@
 
 namespace App\DataFixtures;
 
-use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use App\Entity\Pen;
 use App\Entity\Type;
-use App\Entity\Material;
-use App\Entity\Color;
+use App\Entity\User;
 use App\Entity\Brand;
+use App\Entity\Color;
+use App\Entity\Material;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
 {

@@ -42,9 +42,6 @@ class PenController extends AbstractController
         ]);
     }
 
-
-
-
     #[Route('/pens/{id}', name: 'app_pen_by_id', methods: ['GET'])]
     #[OA\Response(
         response: 200,
@@ -84,7 +81,7 @@ class PenController extends AbstractController
     )]
     #[OA\Tag(name: 'pens')]
     #[Security(name: 'Bearer')]
-    public function add(EntityManagerInterface $em, Request $request, TypeRepository $typeRepository, MaterialRepository $materialRepository, BrandRepository $brandRepository): JsonResponse
+    public function add(EntityManagerInterface $em, Request $request, TypeRepository $typeRepository, MaterialRepository $materialRepository, ColorRepository $colorRepository ,BrandRepository $brandRepository): JsonResponse
     {
         try {
             // On recupère les données du corps de la requête
@@ -120,6 +117,25 @@ class PenController extends AbstractController
                 $pen->setMaterial($material);
             }
 
+            
+            // Récupération du matériel
+            if (!empty($data['color'])) {
+                $color = $colorRepository->find($data['color']);
+
+                if (!$color)
+                    throw new \Exception("Le matériel renseigné n'existe pas");
+
+                $pen->setColor($color);
+            }
+            // Récupération du matériel
+            if (!empty($data['brand'])) {
+                $brand = $brandRepository->find($data['brand']);
+
+                if (!$brand)
+                    throw new \Exception("Le matériel renseigné n'existe pas");
+
+                $pen->setBrand($brand);
+            }
             $em->persist($pen);
             $em->flush();
 
@@ -203,7 +219,7 @@ class PenController extends AbstractController
                 if (!$color)
                     throw new \Exception("La couleur renseigné n'existe pas");
 
-                $pen->setColors($color);
+                $pen->setColor($color);
             }
 
             if (!empty($data['brand'])) {

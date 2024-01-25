@@ -15,7 +15,6 @@ class Pen
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('pens:read')]
     private ?int $id = null;
 
     #[ORM\Column(length: 30)]
@@ -47,6 +46,11 @@ class Pen
     #[ORM\ManyToMany(targetEntity: Color::class, inversedBy: 'pens')]
     #[Groups('pens:read')]
     private Collection $colors;
+
+    public function __construct()
+    {
+        $this->colors = new ArrayCollection();
+    }
 
     #[ORM\ManyToOne(inversedBy: 'pens')]
     #[Groups('pens:read')]
@@ -136,7 +140,7 @@ class Pen
         return $this->colors;
     }
 
-    public function setColors(?Color $colors): static
+    public function setColor(?Color $colors): static
     {
         $this->colors = $colors;
 
