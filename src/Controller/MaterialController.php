@@ -57,6 +57,16 @@ class MaterialController extends AbstractController
     }
 
     #[Route('/materials', name: 'app_material_add', methods: ['POST'])]
+    #[OA\Post(
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                ref: new Model(
+                    type: Material::class, 
+                    groups: ['pens:create','pens:read']
+                )
+            )
+        )
+    )]
     #[OA\Response(
         response: 200,
         description: 'Returns result of add material',
@@ -65,7 +75,7 @@ class MaterialController extends AbstractController
             items: new OA\Items(ref: new Model(type: Material::class, groups: ['pens:read']))
         )
     )]
-    #[OA\Tag(name: 'material')]
+    #[OA\Tag(name: 'materials')]
     #[Security(name: 'Bearer')]
     public function add(EntityManagerInterface $em, Request $request): JsonResponse
     {
@@ -92,6 +102,26 @@ class MaterialController extends AbstractController
         }
     }
     #[Route('/materials/{id}', name: 'app_material_update', methods: ['PUT', 'PATCH'])]
+    #[OA\Put(
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                ref: new Model(
+                    type: Material::class, 
+                    groups: ['pens:create','pens:read']
+                )
+            )
+        )
+    )]
+    #[OA\Patch(
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                ref: new Model(
+                    type: Material::class, 
+                    groups: ['pens:create','pens:read']
+                )
+            )
+        )
+    )]
     #[OA\Response(
         response: 200,
         description: 'Returns result of update material',

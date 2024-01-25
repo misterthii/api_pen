@@ -55,6 +55,16 @@ class ColorController extends AbstractController
     }
 
     #[Route('/colors', name: 'app_color_add', methods: ['POST'])]
+    #[OA\Post(
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                ref: new Model(
+                    type: Color::class, 
+                    groups: ['pens:create','pens:read']
+                )
+            )
+        )
+    )]
     #[OA\Response(
         response: 200,
         description: 'Returns result of add color',
@@ -63,7 +73,7 @@ class ColorController extends AbstractController
             items: new OA\Items(ref: new Model(type: Color::class, groups: ['pens:read']))
         )
     )]
-    #[OA\Tag(name: 'color')]
+    #[OA\Tag(name: 'colors')]
     #[Security(name: 'Bearer')]
     public function add(EntityManagerInterface $em, Request $request): JsonResponse
     {
@@ -90,6 +100,26 @@ class ColorController extends AbstractController
         }
     }
     #[Route('/colors/{id}', name: 'app_color_update', methods: ['PUT', 'PATCH'])]
+    #[OA\Put(
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                ref: new Model(
+                    type: Color::class, 
+                    groups: ['pens:create','pens:read']
+                )
+            )
+        )
+    )]
+    #[OA\Patch(
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                ref: new Model(
+                    type: Color::class, 
+                    groups: ['pens:create','pens:read']
+                )
+            )
+        )
+    )]
     #[OA\Response(
         response: 200,
         description: 'Returns result of update color',

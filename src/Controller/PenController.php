@@ -64,6 +64,16 @@ class PenController extends AbstractController
     }
 
     #[Route('/pens', name: 'app_pens_add', methods: ['POST'])]
+    #[OA\Post(
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                ref: new Model(
+                    type: Pen::class, 
+                    groups: ['pens:create','pens:read']
+                )
+            )
+        )
+    )]
     #[OA\Response(
         response: 200,
         description: 'Returns result of add pen',
@@ -133,6 +143,26 @@ class PenController extends AbstractController
         )
     )]
     #[OA\Tag(name: 'pens')]
+    #[OA\Put(
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                ref: new Model(
+                    type: Pen::class, 
+                    groups: ['pens:create','pens:read']
+                )
+            )
+        )
+    )]
+    #[OA\Patch(
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                ref: new Model(
+                    type: Pen::class, 
+                    groups: ['pens:create','pens:read']
+                )
+            )
+        )
+    )]
     #[Security(name: 'Bearer')]
     public function update(Pen $pen, EntityManagerInterface $em, Request $request, TypeRepository $typeRepository, MaterialRepository $materialRepository, ColorRepository $colorRepository, BrandRepository $brandRepository): JsonResponse
     {

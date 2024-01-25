@@ -4,10 +4,10 @@ namespace App\Entity;
 
 use App\Repository\PenRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: PenRepository::class)]
 class Pen
@@ -52,10 +52,6 @@ class Pen
     #[Groups('pens:read')]
     private ?Brand $brand = null;
 
-    public function __construct()
-    {
-        $this->colors = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -135,9 +131,6 @@ class Pen
         return $this;
     }
 
-    /**
-     * @return Collection<int, Color>
-     */
     public function getColors(): Collection
     {
         return $this->colors;
@@ -154,6 +147,7 @@ class Pen
     {
         if (!$this->colors->contains($color)) {
             $this->colors->add($color);
+            $color->addPen($this);
         }
 
         return $this;
@@ -161,7 +155,9 @@ class Pen
 
     public function removeColor(Color $color): static
     {
-        $this->colors->removeElement($color);
+        if ($this->colors->removeElement($color)) {
+            $color->removePen($this);
+        }
 
         return $this;
     }

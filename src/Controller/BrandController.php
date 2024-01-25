@@ -56,6 +56,16 @@ class BrandController extends AbstractController
     }
 
     #[Route('/brands', name: 'app_brands_add', methods: ['POST'])]
+    #[OA\Post(
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                ref: new Model(
+                    type: Brand::class, 
+                    groups: ['pens:create','pens:read']
+                )
+            )
+        )
+    )]
     #[OA\Response(
         response: 200,
         description: 'Returns result of add brand',
@@ -91,6 +101,26 @@ class BrandController extends AbstractController
         }
     }
     #[Route('/brands/{id}', name: 'app_brands_update', methods: ['PUT', 'PATCH'])]
+    #[OA\Put(
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                ref: new Model(
+                    type: Brand::class, 
+                    groups: ['pens:create','pens:read']
+                )
+            )
+        )
+    )]
+    #[OA\Patch(
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                ref: new Model(
+                    type: Brand::class, 
+                    groups: ['pens:create','pens:read']
+                )
+            )
+        )
+    )]
     #[OA\Response(
         response: 200,
         description: 'Returns result of update brand',

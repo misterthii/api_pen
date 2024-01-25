@@ -46,9 +46,6 @@ class Color
         return $this;
     }
 
-    /**
-     * @return Collection<int, Pen>
-     */
     public function getPens(): Collection
     {
         return $this->pens;

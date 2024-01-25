@@ -59,6 +59,16 @@ class TypeController extends AbstractController
     }
 
     #[Route('/types', name: 'app_types_add', methods: ['POST'])]
+    #[OA\Post(
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                ref: new Model(
+                    type: Type::class, 
+                    groups: ['pens:create','pens:read']
+                )
+            )
+        )
+    )]
     #[OA\Response(
         response: 200,
         description: 'Returns result of add type',
@@ -103,6 +113,26 @@ class TypeController extends AbstractController
         )
     )]
     #[OA\Tag(name: 'types')]
+    #[OA\Put(
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                ref: new Model(
+                    type: Type::class, 
+                    groups: ['pens:create','pens:read']
+                )
+            )
+        )
+    )]
+    #[OA\Patch(
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                ref: new Model(
+                    type: Type::class, 
+                    groups: ['pens:create','pens:read']
+                )
+            )
+        )
+    )]
     #[Security(name: 'Bearer')]
     public function update(Type $type, EntityManagerInterface $em, Request $request): JsonResponse
     {
