@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PenRepository::class)]
 class Pen
@@ -14,32 +15,41 @@ class Pen
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('pens:read')]
     private ?int $id = null;
 
     #[ORM\Column(length: 30)]
+    #[Groups('pens:read')] // <== Add this line pour ajouter le champ name dans la réponse de l'API
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Groups('pens:read')]
     private ?float $price = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups('pens:read')]
     private ?string $description = null;
 
     #[ORM\Column(length: 10, unique: true)]
+    #[Groups('pens:read')]
     private ?string $ref = null;
 
     #[ORM\ManyToOne(inversedBy: 'pens')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups('pens:read')]
     private ?Type $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'pens')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?material $Material = null;
+    #[Groups('pens:read')]
+    private ?Material $Material = null;
 
     #[ORM\ManyToMany(targetEntity: Color::class, inversedBy: 'pens')]
+    #[Groups('pens:read')]
     private Collection $colors;
 
     #[ORM\ManyToOne(inversedBy: 'pens')]
+    #[Groups('pens:read')]
     private ?Brand $brand = null;
 
     public function __construct()

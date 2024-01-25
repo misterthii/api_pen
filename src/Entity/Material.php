@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\MaterialRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\MaterialRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MaterialRepository::class)]
 class Material
@@ -13,12 +14,14 @@ class Material
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('pens:read')]
     private ?int $id = null;
 
     #[ORM\Column(length: 20)]
+    #[Groups('pens:read')]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'material', targetEntity: Pen::class)]
+    #[ORM\OneToMany(mappedBy: 'Material', targetEntity: Pen::class)]
     private Collection $pens;
 
     public function __construct()
