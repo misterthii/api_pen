@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
-use App\Entity\Brand;
+use App\Entity\Color;
 use OpenApi\Attributes as OA;
-use App\Repository\BrandRepository;
+use App\Repository\ColorRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
@@ -12,69 +12,70 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 #[Route('/api', name: 'api_')]
-class BrandController extends AbstractController
+class ColorController extends AbstractController
 {
-    #[Route('/brand', name: 'app_brands', methods: ['GET'])]
+    #[Route('/color', name: 'app_colors', methods: ['GET'])]
     #[OA\Response(
         response: 200,
-        description: 'Returns all brand',
+        description: 'Returns all color',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Brand::class, groups: ['pens:read']))
+            items: new OA\Items(ref: new Model(type: Color::class, groups: ['pens:read']))
         )
     )]
-    #[OA\Tag(name: 'brands')]
+    #[OA\Tag(name: 'colors')]
     #[Security(name: 'Bearer')]
-    public function all_brand(BrandRepository $brandRepository): JsonResponse
+    public function all_color(ColorRepository $colorRepository): JsonResponse
     {
-        $brand = $brandRepository->findAll();
+        $color = $colorRepository->findAll();
 
         return $this->json([
-            'brand' => $brand,
+            'colors' => $color,
         ], context: [
             'groups' => ['pens:read']
         ]);
     }
 
-    #[Route('/brands/{id}', name: 'app_brand_by_id', methods: ['GET'])]
+    #[Route('/colors/{id}', name: 'app_color_by_id', methods: ['GET'])]
     #[OA\Response(
         response: 200,
-        description: 'Returns brand of id',
+        description: 'Returns color of id',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Brand::class, groups: ['pens:read']))
+            items: new OA\Items(ref: new Model(type: Color::class, groups: ['pens:read']))
         )
     )]
-    #[OA\Tag(name: 'brands')]
+    #[OA\Tag(name: 'colors')]
     #[Security(name: 'Bearer')]
-    public function brand_by_id(Brand $brand): JsonResponse
+    public function color_by_id(Color $color): JsonResponse
     {
-        return $this->json([$brand], context: [
+        return $this->json([$color], context: [
             'groups' => ['pens:read'],
         ]);
     }
 
-    #[Route('/brands', name: 'app_brands_add', methods: ['POST'])]
+    #[Route('/colors', name: 'app_color_add', methods: ['POST'])]
     #[OA\Post(
         requestBody: new OA\RequestBody(
             content: new OA\JsonContent(
                 ref: new Model(
-                    type: Brand::class, 
-                    groups: ['pens:create','pens:read']
+                    type: Color::class,
+                    groups: ['pens:create', 'pens:read']
                 )
             )
         )
     )]
     #[OA\Response(
         response: 200,
-        description: 'Returns result of add brand',
+        description: 'Returns result of add color',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Brand::class, groups: ['pens:read']))
+            items: new OA\Items(ref: new Model(type: Color::class, groups: ['pens:read']))
         )
     )]
-    #[OA\Tag(name: 'brands')]
+    #[OA\Tag(name: 'colors')]
     #[Security(name: 'Bearer')]
     public function add(EntityManagerInterface $em, Request $request): JsonResponse
     {
@@ -84,13 +85,13 @@ class BrandController extends AbstractController
             $data = json_decode($request->getContent(), true);
 
             // On traite les données pour créer un nouveau Stylo
-            $brand = new Brand();
-            $brand->setName($data['name']);
+            $color = new Color();
+            $color->setName($data['name']);
 
-            $em->persist($brand);
+            $em->persist($color);
             $em->flush();
 
-            return $this->json($brand, context: [
+            return $this->json($color, context: [
                 'groups' => ['pens:read'],
             ]);
         } catch (\Exception $e) {
@@ -100,13 +101,13 @@ class BrandController extends AbstractController
             ], 500);
         }
     }
-    #[Route('/brands/{id}', name: 'app_brands_update', methods: ['PUT', 'PATCH'])]
+    #[Route('/colors/{id}', name: 'app_color_update', methods: ['PUT', 'PATCH'])]
     #[OA\Put(
         requestBody: new OA\RequestBody(
             content: new OA\JsonContent(
                 ref: new Model(
-                    type: Brand::class, 
-                    groups: ['pens:create','pens:read']
+                    type: Color::class,
+                    groups: ['pens:create', 'pens:read']
                 )
             )
         )
@@ -115,23 +116,23 @@ class BrandController extends AbstractController
         requestBody: new OA\RequestBody(
             content: new OA\JsonContent(
                 ref: new Model(
-                    type: Brand::class, 
-                    groups: ['pens:create','pens:read']
+                    type: Color::class,
+                    groups: ['pens:create', 'pens:read']
                 )
             )
         )
     )]
     #[OA\Response(
         response: 200,
-        description: 'Returns result of update brand',
+        description: 'Returns result of update color',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Brand::class, groups: ['pens:read']))
+            items: new OA\Items(ref: new Model(type: Color::class, groups: ['pens:read']))
         )
     )]
-    #[OA\Tag(name: 'brands')]
+    #[OA\Tag(name: 'colors')]
     #[Security(name: 'Bearer')]
-    public function update(Brand $brand, EntityManagerInterface $em, Request $request): JsonResponse
+    public function update(Color $color, EntityManagerInterface $em, Request $request): JsonResponse
     {
         try {
             // On recupère les données du corps de la requête
@@ -139,12 +140,12 @@ class BrandController extends AbstractController
             $data = json_decode($request->getContent(), true);
 
             // On traite les données pour créer un nouveau Stylo
-            $brand = new brand();
-            $brand->setName($data['name']);
+            $color = new Color();
+            $color->setName($data['name']);
 
             $em->flush();
 
-            return $this->json($brand, context: [
+            return $this->json($color, context: [
                 'groups' => ['pens:read'],
             ]);
         } catch (\Exception $e) {
@@ -155,25 +156,25 @@ class BrandController extends AbstractController
         }
     }
 
-    #[Route('/brands/{id}', name: 'app_brands_delete', methods: ['DELETE'])]
+    #[Route('/colors/{id}', name: 'app_color_delete', methods: ['DELETE'])]
     #[OA\Response(
         response: 200,
-        description: 'Returns result of delete brand',
+        description: 'Returns result of delete color',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Brand::class, groups: ['pens:read']))
+            items: new OA\Items(ref: new Model(type: Color::class, groups: ['pens:read']))
         )
     )]
-    #[OA\Tag(name: 'brands')]
+    #[OA\Tag(name: 'colors')]
     #[Security(name: 'Bearer')]
-    public function delete(Brand $brand, EntityManagerInterface $em): JsonResponse
+    public function delete(Color $color, EntityManagerInterface $em): JsonResponse
     {
-        $em->remove($brand);
+        $em->remove($color);
         $em->flush();
 
         return $this->json([
             'code' => 200,
-            'message' => 'La marque a bien été supprimé',
+            'message' => 'Le color a bien été supprimé',
         ]);
     }
 }

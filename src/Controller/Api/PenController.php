@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
 use Faker\Factory;
 use App\Entity\Pen;
@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 #[Route('/api', name: 'api_')]
 class PenController extends AbstractController
 {
@@ -65,8 +66,8 @@ class PenController extends AbstractController
         requestBody: new OA\RequestBody(
             content: new OA\JsonContent(
                 ref: new Model(
-                    type: Pen::class, 
-                    groups: ['pens:create','pens:read']
+                    type: Pen::class,
+                    groups: ['pens:create', 'pens:read']
                 )
             )
         )
@@ -81,26 +82,37 @@ class PenController extends AbstractController
     )]
     #[OA\Tag(name: 'pens')]
     #[Security(name: 'Bearer')]
-    public function add(EntityManagerInterface $em, Request $request, TypeRepository $typeRepository, MaterialRepository $materialRepository, ColorRepository $colorRepository ,BrandRepository $brandRepository): JsonResponse
+    public function add(EntityManagerInterface $em, Request $request, TypeRepository $typeRepository, MaterialRepository $materialRepository, ColorRepository $colorRepository, BrandRepository $brandRepository): JsonResponse
     {
         try {
+            $content = $request->getContent();
+
+            if ($content === null) {
+                throw new \Exception("La requête ne contient pas de corps");
+            }
             // On recupère les données du corps de la requête
             // Que l'on transforme ensuite en tableau associatif
-            $data = json_decode($request->getContent(), true);
+            try {
+                $data = json_decode($request->getContent(), true);
+            } catch (\JsonException $e) {
+                throw new \Exception('Erreur de décodage JSON : ' . $e->getMessage());
+            }
 
+            if ($data === null) {
+                throw new \Exception("Le corps de la requête n'est pas au format JSON ou est mal formé");
+            }
             $faker = Factory::create();
 
             // On traite les données pour créer un nouveau Stylo
             $pen = new Pen();
-            $pen->setName($data['name']);
-            $pen->setPrice($data['price']);
-            $pen->setDescription($data['description']);
+            $pen->setName($data["name"]);
+            $pen->setPrice($data["price"]);
+            $pen->setDescription($data["description"]);
             $pen->setRef($faker->unique()->ean13);
 
             // Récupération du type de stylo
             if (!empty($data['type'])) {
-                $type = $typeRepository->find($data['type']);
-
+                $type = $typeRepository->find($data["type"]);
                 if (!$type)
                     throw new \Exception("Le type renseigné n'existe pas");
 
@@ -108,28 +120,28 @@ class PenController extends AbstractController
             }
 
             // Récupération du matériel
-            if (!empty($data['material'])) {
-                $material = $materialRepository->find($data['material']);
+            if (!empty($data["material"])) {
+                $material = $materialRepository->find($data["material"]);
 
                 if (!$material)
                     throw new \Exception("Le matériel renseigné n'existe pas");
 
                 $pen->setMaterial($material);
             }
-
-            
-            // Récupération du matériel
+            // Récupération du color
             if (!empty($data['color'])) {
-                $color = $colorRepository->find($data['color']);
-
-                if (!$color)
-                    throw new \Exception("Le matériel renseigné n'existe pas");
-
-                $pen->setColor($color);
+                foreach ($data['color'] as $colorId) {
+                    
+                    $color = $colorRepository->find($colorId);
+                    if (!$color) {
+                        throw new \Exception("La couleur renseignée n'existe pas");
+                    }
+                    $pen->addColor($color);
+                }
             }
-            // Récupération du matériel
+            // Récupération du marque
             if (!empty($data['brand'])) {
-                $brand = $brandRepository->find($data['brand']);
+                $brand = $brandRepository->find($data["brand"]);
 
                 if (!$brand)
                     throw new \Exception("Le matériel renseigné n'existe pas");
@@ -163,8 +175,8 @@ class PenController extends AbstractController
         requestBody: new OA\RequestBody(
             content: new OA\JsonContent(
                 ref: new Model(
-                    type: Pen::class, 
-                    groups: ['pens:create','pens:read']
+                    type: Pen::class,
+                    groups: ['pens:create', 'pens:read']
                 )
             )
         )
@@ -173,8 +185,8 @@ class PenController extends AbstractController
         requestBody: new OA\RequestBody(
             content: new OA\JsonContent(
                 ref: new Model(
-                    type: Pen::class, 
-                    groups: ['pens:create','pens:read']
+                    type: Pen::class,
+                    groups: ['pens:create', 'pens:read']
                 )
             )
         )
@@ -188,11 +200,10 @@ class PenController extends AbstractController
             $data = json_decode($request->getContent(), true);
 
             // On traite les données pour créer un nouveau Stylo
-            $pen = new Pen();
+            
             $pen->setName($data['name']);
             $pen->setPrice($data['price']);
             $pen->setDescription($data['description']);
-
             // Récupération du type de stylo
             if (!empty($data['type'])) {
                 $type = $typeRepository->find($data['type']);
@@ -214,12 +225,15 @@ class PenController extends AbstractController
             }
 
             if (!empty($data['color'])) {
-                $color = $colorRepository->find($data['color']);
+                foreach ($data['color'] as $color) {
+                    $color = $colorRepository->find($color);
+                    if (!$color) {
+                        throw new \Exception("La couleur renseigné n'existe pas");
+                    }
 
-                if (!$color)
-                    throw new \Exception("La couleur renseigné n'existe pas");
 
-                $pen->setColor($color);
+                    $pen->addColor($color);
+                }
             }
 
             if (!empty($data['brand'])) {

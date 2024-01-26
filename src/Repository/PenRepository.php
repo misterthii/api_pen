@@ -21,6 +21,18 @@ class PenRepository extends ServiceEntityRepository
         parent::__construct($registry, Pen::class);
     }
 
+    public function selectAllPenWithBrandAndTypeAndColorAndMaterial()
+    {
+        $queryBuilder = $this->createQueryBuilder('pen');
+        $queryBuilder->select('pen', 'brand', 'type', 'color', 'material')
+            ->join('pen.brand', 'brand')
+            ->join('pen.type', 'type')
+            ->join('pen.colors', 'color')
+            ->join('pen.material', 'material');
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
 //    /**
 //     * @return Pen[] Returns an array of Pen objects
 //     */

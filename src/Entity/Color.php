@@ -14,13 +14,14 @@ class Color
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('pens:create')]
     private ?int $id = null;
 
     #[ORM\Column(length: 20)]
     #[Groups('pens:read')]
     private ?string $name = null;
 
-    #[ORM\ManyToMany(targetEntity: Pen::class, mappedBy: 'colors')]
+    #[ORM\ManyToMany(targetEntity: Pen::class, mappedBy: 'colors',cascade:["persist"])]
     private Collection $pens;
 
     public function __construct()

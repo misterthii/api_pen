@@ -1,67 +1,68 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
-use App\Entity\Material;
+
+use App\Entity\Type;
 use OpenApi\Attributes as OA;
-use App\Repository\MaterialRepository;
+use App\Repository\TypeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 #[Route('/api', name: 'api_')]
-class MaterialController extends AbstractController
+class TypeController extends AbstractController
 {
-    #[Route('/material', name: 'app_materials', methods: ['GET'])]
+    #[Route('/type', name: 'app_types', methods: ['GET'])]
     #[OA\Response(
         response: 200,
-        description: 'Returns all material',
+        description: 'Returns all type',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Material::class, groups: ['pens:read']))
+            items: new OA\Items(ref: new Model(type: Type::class, groups: ['pens:read']))
         )
     )]
-    #[OA\Tag(name: 'materials')]
+    #[OA\Tag(name: 'types')]
     #[Security(name: 'Bearer')]
-    public function all_material(MaterialRepository $materialRepository): JsonResponse
+    public function all_type(TypeRepository $typeRepository): JsonResponse
     {
-        $material = $materialRepository->findAll();
+        $type = $typeRepository->findAll();
 
         return $this->json([
-            'materials' => $material,
+            'type' => $type,
         ], context: [
             'groups' => ['pens:read']
         ]);
     }
 
-    #[Route('/materials/{id}', name: 'app_material_by_id', methods: ['GET'])]
+    #[Route('/types/{id}', name: 'app_type_by_id', methods: ['GET'])]
     #[OA\Response(
         response: 200,
-        description: 'Returns material of id',
+        description: 'Returns type of id',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Material::class, groups: ['pens:read']))
+            items: new OA\Items(ref: new Model(type: Type::class, groups: ['pens:read']))
         )
     )]
-    #[OA\Tag(name: 'materials')]
+    #[OA\Tag(name: 'types')]
     #[Security(name: 'Bearer')]
-    public function material_by_id(Material $material): JsonResponse
+    public function type_by_id(Type $type): JsonResponse
     {
-        return $this->json([$material], context: [
+        return $this->json([$type], context: [
             'groups' => ['pens:read'],
         ]);
     }
 
-    #[Route('/materials', name: 'app_material_add', methods: ['POST'])]
+    #[Route('/types', name: 'app_types_add', methods: ['POST'])]
     #[OA\Post(
         requestBody: new OA\RequestBody(
             content: new OA\JsonContent(
                 ref: new Model(
-                    type: Material::class, 
+                    type: Type::class, 
                     groups: ['pens:create','pens:read']
                 )
             )
@@ -69,13 +70,13 @@ class MaterialController extends AbstractController
     )]
     #[OA\Response(
         response: 200,
-        description: 'Returns result of add material',
+        description: 'Returns result of add type',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Material::class, groups: ['pens:read']))
+            items: new OA\Items(ref: new Model(type: Type::class, groups: ['pens:read']))
         )
     )]
-    #[OA\Tag(name: 'materials')]
+    #[OA\Tag(name: 'types')]
     #[Security(name: 'Bearer')]
     public function add(EntityManagerInterface $em, Request $request): JsonResponse
     {
@@ -85,13 +86,13 @@ class MaterialController extends AbstractController
             $data = json_decode($request->getContent(), true);
 
             // On traite les données pour créer un nouveau Stylo
-            $material = new Material();
-            $material->setName($data['name']);
+            $type = new Type();
+            $type->setName($data['name']);
 
-            $em->persist($material);
+            $em->persist($type);
             $em->flush();
 
-            return $this->json($material, context: [
+            return $this->json($type, context: [
                 'groups' => ['pens:read'],
             ]);
         } catch (\Exception $e) {
@@ -101,12 +102,21 @@ class MaterialController extends AbstractController
             ], 500);
         }
     }
-    #[Route('/materials/{id}', name: 'app_material_update', methods: ['PUT', 'PATCH'])]
+    #[Route('/types/{id}', name: 'app_types_update', methods: ['PUT', 'PATCH'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns result of update type',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: Type::class, groups: ['pens:read']))
+        )
+    )]
+    #[OA\Tag(name: 'types')]
     #[OA\Put(
         requestBody: new OA\RequestBody(
             content: new OA\JsonContent(
                 ref: new Model(
-                    type: Material::class, 
+                    type: Type::class, 
                     groups: ['pens:create','pens:read']
                 )
             )
@@ -116,23 +126,14 @@ class MaterialController extends AbstractController
         requestBody: new OA\RequestBody(
             content: new OA\JsonContent(
                 ref: new Model(
-                    type: Material::class, 
+                    type: Type::class, 
                     groups: ['pens:create','pens:read']
                 )
             )
         )
     )]
-    #[OA\Response(
-        response: 200,
-        description: 'Returns result of update material',
-        content: new OA\JsonContent(
-            type: 'array',
-            items: new OA\Items(ref: new Model(type: Material::class, groups: ['pens:read']))
-        )
-    )]
-    #[OA\Tag(name: 'materials')]
     #[Security(name: 'Bearer')]
-    public function update(Material $material, EntityManagerInterface $em, Request $request): JsonResponse
+    public function update(Type $type, EntityManagerInterface $em, Request $request): JsonResponse
     {
         try {
             // On recupère les données du corps de la requête
@@ -140,12 +141,12 @@ class MaterialController extends AbstractController
             $data = json_decode($request->getContent(), true);
 
             // On traite les données pour créer un nouveau Stylo
-            $material = new Material();
-            $material->setName($data['name']);
+            $type = new Type();
+            $type->setName($data['name']);
 
             $em->flush();
 
-            return $this->json($material, context: [
+            return $this->json($type, context: [
                 'groups' => ['pens:read'],
             ]);
         } catch (\Exception $e) {
@@ -156,25 +157,25 @@ class MaterialController extends AbstractController
         }
     }
 
-    #[Route('/materials/{id}', name: 'app_material_delete', methods: ['DELETE'])]
+    #[Route('/types/{id}', name: 'app_types_delete', methods: ['DELETE'])]
     #[OA\Response(
         response: 200,
-        description: 'Returns result of delete material',
+        description: 'Returns result of delete type',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Material::class, groups: ['pens:read']))
+            items: new OA\Items(ref: new Model(type: Type::class, groups: ['pens:read']))
         )
     )]
-    #[OA\Tag(name: 'materials')]
+    #[OA\Tag(name: 'types')]
     #[Security(name: 'Bearer')]
-    public function delete(Material $material, EntityManagerInterface $em): JsonResponse
+    public function delete(Type $type, EntityManagerInterface $em): JsonResponse
     {
-        $em->remove($material);
+        $em->remove($type);
         $em->flush();
 
         return $this->json([
             'code' => 200,
-            'message' => 'Le material a bien été supprimé',
+            'message' => 'La marque a bien été supprimé',
         ]);
     }
 }

@@ -21,6 +21,13 @@ class MaterialRepository extends ServiceEntityRepository
         parent::__construct($registry, Material::class);
     }
 
+    public function selectAllMateria()
+    {
+        $queryBuilder = $this->createQueryBuilder('material');
+        $queryBuilder->select('material');
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 //    /**
 //     * @return Material[] Returns an array of Material objects
 //     */

@@ -20,6 +20,13 @@ class BrandRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Brand::class);
     }
+    public function selectAllBrand()
+    {
+        $queryBuilder = $this->createQueryBuilder('brand');
+        $queryBuilder->select('brand');
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 
 //    /**
 //     * @return Brand[] Returns an array of Brand objects

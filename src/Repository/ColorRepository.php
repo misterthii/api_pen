@@ -20,7 +20,13 @@ class ColorRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Color::class);
     }
+    public function selectAllColor()
+    {
+        $queryBuilder = $this->createQueryBuilder('color');
+        $queryBuilder->select('color');
 
+        return $queryBuilder->getQuery()->getResult();
+    }
 //    /**
 //     * @return Color[] Returns an array of Color objects
 //     */

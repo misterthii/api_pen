@@ -1,16 +1,53 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Welcome!
+			{% endblock %}
+		</title>
+		<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>"> {% block stylesheets %}{% endblock %}{% block javascripts %}{% endblock %}
+		</head>
+		<body>
+        	<style>
+		.alert-success {
+			background-color: green;
+			color: white;
+			padding: 10px;
+		}
+		.button {
+			background-color: #1f9ee4;
+			color: white;
+			text-decoration: none;
+			padding: 10px;
+		}
+		.banner {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-direction: row;
+		}
+        .container{
+            wiidth: 100%;
+            height: 80vh;
+            background-color: #E6E6E6;
+            border: 1px solid #939393;
+        }
+	</style>
 
-        {% block javascripts %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
-</html>
+			<div class="banner">
+
+				<strong class="alert-success">Bonjour, vous êtes connecté</strong>
+			</div>
+
+			<nav>
+            <a href="{{ path("app_admin_dashboard")}}">dashboard</a>
+				<a href="{{ path("app_admin_pen_index")}}">pen</a>
+				<a href="{{ path("app_admin_brand_index")}}">brand</a>
+				<a href="{{ path("app_admin_color_index")}}">color</a>
+				<a href="{{ path("app_admin_material_index")}}">material</a>
+				<a href="{{ path("app_admin_type_index")}}">type</a>
+			</nav>
+			{% block body %}{% endblock %}
+		</body>
+	</html>

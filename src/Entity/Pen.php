@@ -29,7 +29,7 @@ class Pen
     #[Groups('pens:read')]
     private ?string $description = null;
 
-    #[ORM\Column(length: 10, unique: true)]
+    #[ORM\Column(length: 10, unique: true, nullable: true)]
     #[Groups('pens:read')]
     private ?string $ref = null;
 
@@ -39,12 +39,11 @@ class Pen
     private ?Type $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'pens')]
-    #[ORM\JoinColumn(nullable: false)]
     #[Groups('pens:read')]
-    private ?Material $Material = null;
+    private ?Material $material = null;
 
-    #[ORM\ManyToMany(targetEntity: Color::class, inversedBy: 'pens')]
-    #[Groups('pens:read')]
+    #[ORM\ManyToMany(targetEntity: Color::class, inversedBy: 'pens', cascade:["persist"])]
+    #[Groups('pens:read','pens:create')]
     private Collection $colors;
 
     public function __construct()
@@ -124,13 +123,13 @@ class Pen
 
     public function getMaterial(): ?Material
     {
-        return $this->Material;
+        return $this->material;
     }
 
 
-    public function setMaterial(?Material $Material): static
+    public function setMaterial(?Material $material): static
     {
-        $this->Material = $Material;
+        $this->material = $material;
 
         return $this;
     }
@@ -140,9 +139,9 @@ class Pen
         return $this->colors;
     }
 
-    public function setColor(?Color $colors): static
+    public function setColor(?Color $color): static
     {
-        $this->colors = $colors;
+        $this->colors = $color;
 
         return $this;
     }
